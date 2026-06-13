@@ -1,0 +1,20 @@
+git commit -m "$(cat <<'EOF'
+IMPALA-14822: [DOCS] Fix formatted HTML fragment links via post-build script
+
+DITA-OT emits different anchor ids for nested <concept> elements depending
+on output format. Plain-html uses simple ids (parquet_compression) while
+asf-site-html uses scoped ids (parquet__parquet_compression), so xrefs like
+href="#parquet_compression" work in plain-html but not on the published site.
+
+Changing the DITA xref (e.g. to a hierarchical href) fixes asf-site-html
+but breaks plain-html and can fail the DITA build (DOTX032E) without
+explicit link text. Add fix-asf-site-html-fragments.py to rewrite broken
+fragment hrefs in asf-site-html output after the html5 build, and invoke
+it from the Makefile. DITA source stays unchanged.
+
+Testing: make all -B; post-build script rewrote 301 hrefs under
+docs/build/asf-site-html/topics; verified in-page fragment links in a
+browser.
+
+EOF
+)"
